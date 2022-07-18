@@ -1,4 +1,4 @@
-# How to run Validator Node for Shardnet (Stake Wars: Episode III step-by-step instructions) on Google Cloud (GCP)
+# How to run Validator Node for Shardnet on Google Cloud Platform (Stake Wars: Episode III step-by-step instructions)
 
 ## 1. Create Shardnet wallet, setup Google Cloud instance & deploy NEAR CLI
 
