@@ -246,7 +246,7 @@ wget -O ~/.near/config.json https://s3-us-west-1.amazonaws.com/build.nearprotoco
 ```
 ![image](https://user-images.githubusercontent.com/46512075/179711127-6c700b77-094d-4f2f-a5b9-2bc7d84478ff.png)
 
-####  Start the validator node
+### 2.2  Start the validator node
 
 Setup Systemd
 
@@ -295,8 +295,24 @@ journalctl -n 100 -f -u neard
 ![2022-07-18_00-24](https://user-images.githubusercontent.com/46512075/179716482-f1fb4cbf-72ef-46e8-b7a2-65828449db0f.png)
 
 
-### 2.2 Activating the node as validator
-##### Authorize Wallet Locally
+## 3. Deploy a new staking pool for your validator (Challenge 003)
+
+Deploy a new staking pool for your validator. Do operations on your staking pool to delegate and stake NEAR.
+
+In order to become a validator and enter the validator set, a minimum set of success criteria must be met.
+
+* The node must be fully synced
+* The `validator_key.json` must be in place
+* The contract must be initialized with the public_key in `validator_key.json`
+* The account_id must be set to the staking pool contract id
+* There must be enough delegations to meet the minimum seat price. See the seat price [here](https://explorer.shardnet.near.org/nodes/validators).
+* A proposal must be submitted by pinging the contract
+* Once a proposal is accepted a validator must wait 2-3 epoch to enter the validator set
+* Once in the validator set the validator must produce great than 90% of assigned blocks
+
+Check running status of validator node. If “Validator” is showing up, your pool is selected in the current validators list.
+
+### 3.1 Authorize Wallet Locally
 A full access key needs to be installed locally to be able to sign transactions via NEAR-CLI.
 
 
@@ -322,7 +338,7 @@ near login
 
 ![2022-07-18_00-31](https://user-images.githubusercontent.com/46512075/179713309-c81bb200-8030-42e1-928c-cf8a411454d4.png)
 
-#####  Create the validator_key.json
+####  Create the validator_key.json
 * Copy the file generated to shardnet folder:
 Make sure to replace <pool_id> by your accountId
 ```
@@ -341,17 +357,122 @@ File content must be in the following pattern:
   "secret_key": "ed25519:****"
 }
 ```
+### 3.2 Mounting a staking pool
 
-#### Becoming a Validator
-In order to become a validator and enter the validator set, a minimum set of success criteria must be met.
+NEAR uses a staking pool factory with a whitelisted staking contract to ensure delegators’ funds are safe. In order to run a validator on NEAR, a staking pool must be deployed to a NEAR account and integrated into a NEAR validator node. Delegators must use a UI or the command line to stake to the pool. A staking pool is a smart contract that is deployed to a NEAR account.
 
-* The node must be fully synced
-* The `validator_key.json` must be in place
-* The contract must be initialized with the public_key in `validator_key.json`
-* The account_id must be set to the staking pool contract id
-* There must be enough delegations to meet the minimum seat price. See the seat price [here](https://explorer.shardnet.near.org/nodes/validators).
-* A proposal must be submitted by pinging the contract
-* Once a proposal is accepted a validator must wait 2-3 epoch to enter the validator set
-* Once in the validator set the validator must produce great than 90% of assigned blocks
+#### Deploy a Staking Pool Contract
+##### Deploy a Staking Pool
+Calls the staking pool factory, creates a new staking pool with the specified name, and deploys it to the indicated accountId.
 
-Check running status of validator node. If “Validator” is showing up, your pool is selected in the current validators list.
+```
+near call factory.shardnet.near create_staking_pool '{"staking_pool_id": "<pool id>", "owner_id": "<accountId>", "stake_public_key": "<public key>", "reward_fee_fraction": {"numerator": 5, "denominator": 100}, "code_hash":"DD428g9eqLL8fWUxv8QSpVFzyHi1Qd16P8ephYCTmMSZ"}' --accountId="<accountId>" --amount=30 --gas=300000000000000
+```
+
+From the example above, you need to replace:
+
+* **Pool ID**: Staking pool name, the factory automatically adds its name to this parameter, creating {pool_id}.{staking_pool_factory}
+Examples:   
+
+- If pool id is stakewars will create : `stakewars.factory.shardnet.near`
+
+* **Owner ID**: The SHARDNET account (i.e. stakewares.shardnet.near) that will manage the staking pool.
+* **Public Key**: The public key in your **validator_key.json** file.
+* **5**: The fee the pool will charge (e.g. in this case 5 over 100 is 5% of fees).
+* **Account Id**: The SHARDNET account deploying and signing the mount tx.  Usually the same as the Owner ID.
+
+> Be sure to have at least 30 NEAR available, it is the minimum required for storage.
+Example : near call stake_wars_validator.factory.shardnet.near --amount 30 --accountId stakewars.shardnet.near --gas=300000000000000
+
+
+To change the pool parameters, such as changing the amount of commission charged to 1% in the example below, use this command:
+```
+near call <pool_name> update_reward_fee_fraction '{"reward_fee_fraction": {"numerator": 1, "denominator": 100}}' --accountId <account_id> --gas=300000000000000
+```
+
+You will see something like this:
+
+![2022-07-18_01-35](https://user-images.githubusercontent.com/46512075/179719355-92c668ef-6890-4e21-bac6-2db8ba4df74d.png)
+
+
+If there is a “True” at the End. Your pool is created.
+
+**You have now configure your Staking pool.**
+
+Check your pool is now visible on https://explorer.shardnet.near.org/nodes/validators
+
+#### Transactions Guide
+##### Deposit and Stake NEAR
+
+Command:
+```
+near call <staking_pool_id> deposit_and_stake --amount <amount> --accountId <accountId> --gas=300000000000000
+```
+![2022-07-18_01-40](https://user-images.githubusercontent.com/46512075/179719698-9b36a982-ac8c-4975-983a-134aeeca1e73.png)
+
+
+##### Unstake NEAR
+Amount in yoctoNEAR.
+
+Run the following command to unstake:
+```
+near call <staking_pool_id> unstake '{"amount": "<amount yoctoNEAR>"}' --accountId <accountId> --gas=300000000000000
+```
+To unstake all you can run this one:
+```
+near call <staking_pool_id> unstake_all --accountId <accountId> --gas=300000000000000
+```
+##### Withdraw
+
+Unstaking takes 2-3 epochs to complete, after that period you can withdraw in YoctoNEAR from pool.
+
+Command:
+```
+near call <staking_pool_id> withdraw '{"amount": "<amount yoctoNEAR>"}' --accountId <accountId> --gas=300000000000000
+```
+Command to withdraw all:
+```
+near call <staking_pool_id> withdraw_all --accountId <accountId> --gas=300000000000000
+```
+
+##### Ping
+A ping issues a new proposal and updates the staking balances for your delegators. A ping should be issued each epoch to keep reported rewards current.
+
+Command:
+```
+near call <staking_pool_id> ping '{}' --accountId <accountId> --gas=300000000000000
+```
+Balances
+Total Balance
+Command:
+```
+near view <staking_pool_id> get_account_total_balance '{"account_id": "<accountId>"}'
+```
+##### Staked Balance
+Command:
+```
+near view <staking_pool_id> get_account_staked_balance '{"account_id": "<accountId>"}'
+```
+##### Unstaked Balance
+Command:
+```
+near view <staking_pool_id> get_account_unstaked_balance '{"account_id": "<accountId>"}'
+```
+##### Available for Withdrawal
+You can only withdraw funds from a contract if they are unlocked.
+
+Command:
+```
+near view <staking_pool_id> is_account_unstaked_balance_available '{"account_id": "<accountId>"}'
+```
+##### Pause / Resume Staking
+###### Pause
+Command:
+```
+near call <staking_pool_id> pause_staking '{}' --accountId <accountId>
+```
+###### Resume
+Command:
+```
+near call <staking_pool_id> resume_staking '{}' --accountId <accountId>
+```
