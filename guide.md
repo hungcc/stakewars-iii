@@ -8,7 +8,7 @@ Follow the guide of Stake Wars III challenges:
 
 [3. Deploy a new staking pool for your validator](https://github.com/hungcc/stakewars-iii/blob/main/guide.md#3-deploy-a-new-staking-pool-for-your-validator-challenge-003)
 
-[4. Setup tools for monitoring node status](
+[4. Setup tools for monitoring node status](https://github.com/hungcc/stakewars-iii/blob/main/guide.md#4-setup-tools-for-monitoring-node-status-challenge-004)
 
 
 ## 1. Create Shardnet wallet, setup Google Cloud instance & deploy NEAR CLI (Challenge 001)
