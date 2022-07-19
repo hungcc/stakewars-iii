@@ -401,7 +401,16 @@ If there is a “True” at the End. Your pool is created.
 
 Check your pool is now visible on https://explorer.shardnet.near.org/nodes/validators
 
-#### Transactions Guide
+Something like this:
+
+![2022-07-18_01-41](https://user-images.githubusercontent.com/46512075/179720727-de4a7992-ed5c-40ac-9c3a-7cae8518460a.png)
+
+![2022-07-18_05-40](https://user-images.githubusercontent.com/46512075/179720760-39fac927-1942-40df-9396-190b89b2ec27.png)
+
+![2022-07-18_06-17](https://user-images.githubusercontent.com/46512075/179720783-4e5e3fd8-3cba-4bc8-b096-6c32212cca9c.png)
+
+
+### 3.3 Transactions Guide
 ##### Deposit and Stake NEAR
 
 Command:
