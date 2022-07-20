@@ -462,6 +462,9 @@ Command:
 ```
 near call <staking_pool_id> ping '{}' --accountId <accountId> --gas=300000000000000
 ```
+![image](https://user-images.githubusercontent.com/46512075/179942204-38aad08d-604e-4dd2-8f03-0a2a40306aa9.png)
+
+
 Balances
 Total Balance
 Command:
@@ -516,16 +519,9 @@ journalctl -n 100 -f -u neard | ccze -A
 
 **Log file sample:**
 
-Validator | 1 validator
-
 ```
-INFO stats: #85079829 H1GUabkB7TW2K2yhZqZ7G47gnpS7ESqicDMNyb9EE6tf Validator 73 validators 30 peers ⬇ 506.1kiB/s ⬆ 428.3kiB/s 1.20 bps 62.08 Tgas/s CPU: 23%, Mem: 7.4 GiB
+INFO stats: #1050007  wJF1mxQWwQddSxphpSuzfDQBZLrbbW3tYbUQ3V5mvro 97 validators 31 peers ⬇ 90.3 kB/s ⬆ 147 kB/s 0.00 bps 0 gas/s CPU: 111%, Mem: 1.85 GB
 ```
-
-* **Validator**: A “Validator” will indicate you are an active validator
-* **73 validators**: Total 73 validators on the network
-* **30 peers**: You current have 30 peers. You need at least 3 peers to reach consensus and start validating
-* **#46199418**: block – Look to ensure blocks are moving
 
 #### RPC
 Any node within the network offers RPC services on port 3030 as long as the port is open in the nodes firewall. The NEAR-CLI uses RPC calls behind the scenes. Common uses for RPC are to check on validator stats, node version and to see delegator stake, although it can be used to interact with the blockchain, accounts and contracts overall.
