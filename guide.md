@@ -271,8 +271,7 @@ Type=simple
 User=$USER
 #Group=near
 WorkingDirectory=$home/root/.near
-ExecStart=/root/nearcore/target/release/neard 
-run
+ExecStart=/root/nearcore/target/release/neard run
 Restart=on-failure
 RestartSec=30
 KillSignal=SIGINT
