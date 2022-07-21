@@ -210,7 +210,7 @@ cd nearcore
 git fetch
 ```
 
-Checkout to the commit needed. Please refer to the commit defined here https://github.com/near/stakewars-iii/blob/main/challenges/commit.md
+Checkout to the commit needed. Please refer to the commit defined here https://github.com/near/stakewars-iii/blob/main/commit.md
 ```
 git checkout <commit>
 ```
